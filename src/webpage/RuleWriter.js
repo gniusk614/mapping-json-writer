@@ -1,7 +1,7 @@
 import { Button, FormControl, Grid, Input, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import * as React from 'react';
-import { IoIosAddCircleOutline } from 'react-icons/io'
-import { AiOutlineSave } from 'react-icons/ai'
+import { AiOutlinePlusCircle } from 'react-icons/ai'
+import { AiOutlineMinusCircle } from 'react-icons/ai'
 import Viewer from './RuleViewer';
 import axios from 'axios'
 import jsonReader from '../lib/mappingRule.json'
@@ -81,11 +81,18 @@ export default function Writer() {
     const [type, setType] = React.useState('');
     const [inputValue, setInputValue] = React.useState(rules);
 
-    const jsonData = jsonReader;
+    let jsonData = jsonReader;
 
 
-    const onClickHandler = () => {
-        const data = jsonData.concat(inputValue)
+    const onClickHandler = (string) => {
+        console.log(string)
+        if(string=='delete'){
+            jsonData.splice(-1,1);
+        }else{
+            jsonData = jsonData.concat(inputValue)
+        }
+        const data = jsonData;
+
         console.log(JSON.stringify(data))
         axios.put("/api/setting", data).then(function (res) {
                 if (res.status === 200) {
@@ -146,8 +153,11 @@ export default function Writer() {
                         <TextField style={inputStyle} name="targetPath" onChange={handleChange} label="targetPath" variant="outlined" /><br />
                     </div>
                     <div>
-                        <Button style={{ "margin": "10px", "width": "240px" }} variant="outlined" onClick={onClickHandler} startIcon={<IoIosAddCircleOutline />}>
+                        <Button style={{ "margin": "10px", "width": "240px" }} disableElevation variant="contained" onClick={()=>onClickHandler("add")} startIcon={<AiOutlinePlusCircle />}>
                             Add
+                        </Button>
+                        <Button style={{ "margin": "10px", "width": "240px" }} variant="outlined" color='error' flag="delete" onClick={()=>onClickHandler("delete")} startIcon={<AiOutlineMinusCircle />}>
+                            delete
                         </Button>
                     </div>
                 </div>
